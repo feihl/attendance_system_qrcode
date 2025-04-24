@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ event['event_name'] }} - Event Details</title>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3a86ff;
+            --secondary-color: #8338ec;
+            --accent-color: #ff006e;
+            --light-bg: #f8f9fa;
+            --dark-bg: #212529;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: white !important;
+        }
+        
+        .header-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+        }
+        
+        .event-meta {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        
+        .activity-grid {
+            margin-bottom: 2rem;
+        }
+        
+        .activity-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 5px solid var(--secondary-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+        }
+        
+        .activity-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .activity-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .activity-title i {
+            margin-right: 0.5rem;
+            font-size: 1rem;
+        }
+        
+        .activity-description {
+            color: #666;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+        
+        .activity-date {
+            display: flex;
+            align-items: center;
+            color: #777;
+            font-size: 0.85rem;
+            margin-bottom: 1.25rem;
+            background-color: var(--light-bg);
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+        }
+        
+        .activity-date i {
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .btn-attendance {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-attendance:hover {
+            background-color: #2a75e8;
+            border-color: #2a75e8;
+            color: white;
+        }
+        
+        .btn-timeout {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: white;
+        }
+        
+        .btn-timeout:hover {
+            background-color: #e5005f;
+            border-color: #e5005f;
+            color: white;
+        }
+        
+        .btn-view {
+            background-color: transparent;
+            border-color: var(--secondary-color);
+            color: var(--secondary-color);
+        }
+        
+        .btn-view:hover {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--secondary-color);
+            font-weight: 600;
+            transition: all 0.2s ease;
+            margin-top: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .back-link:hover {
+            color: var(--primary-color);
+            transform: translateX(-5px);
+        }
+        
+        .back-link i {
+            margin-right: 0.5rem;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            color: #ccc;
+            margin-bottom: 1rem;
+        }
+        
+        .page-title-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .logout-link {
+            color: white;
+            transition: all 0.2s ease;
+        }
+        
+        .logout-link:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-graduation-cap me-2"></i>
+                Event Management
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/dashboard">
+                            <i class="fas fa-home me-1"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link logout-link" href="{{ url_for('admin_logout') }}">
+                            <i class="fas fa-sign-out-alt me-1"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4 mb-5">
+        <!-- Header Section -->
+        <div class="header-section">
+            <h1 class="display-5 fw-bold">{{ event['event_name'] }}</h1>
+            <p class="lead">{{ event['description'] }}</p>
+            <div class="event-meta">
+                <i class="far fa-calendar-alt me-2"></i> Created: {{ event['date_created'] }}
+            </div>
+        </div>
+
+        <!-- Page Title with Back Button -->
+        <div class="page-title-section">
+            <h2 class="mb-0">
+                <i class="fas fa-list-alt me-2"></i> Event Activities
+            </h2>
+            <a href="/admin/dashboard" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+
+        <!-- Activities Grid -->
+        {% if activities %}
+            <div class="row activity-grid">
+                {% for activity in activities %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="activity-card">
+                        <div class="activity-title">
+                            <i class="fas fa-tasks"></i> {{ activity['activity_name'] }}
+                        </div>
+                        <div class="activity-description">
+                            {{ activity['description'] }}
+                        </div>
+                        <div class="activity-date">
+                            <i class="far fa-clock"></i> {{ activity['start_datetime'] }}
+                        </div>
+
+                        <div class="action-buttons">
+                            <a href="/attendance/event-{{ event['id'] }}/activity-{{ activity['id'] }}" class="btn btn-attendance btn-sm">
+                                <i class="fas fa-clipboard-check me-1"></i> Attendance
+                            </a>
+                            <a href="/timeout/event-{{ event['id'] }}/activity-{{ activity['id'] }}" class="btn btn-timeout btn-sm">
+                                <i class="fas fa-hourglass-end me-1"></i> Time-Out
+                            </a>
+                            <a href="/view_students/event-{{event['id']}}/activity-{{ activity['id'] }}" class="btn btn-view btn-sm">
+                                <i class="fas fa-users me-1"></i> View Students
+                            </a>
+                            <br>
+                            <a href="/edit_activity/event-{{ event['id'] }}/activity-{{ activity['id'] }}" class="btn btn-secondary btn-sm mt-2">
+                                <i class="fas fa-edit me-1"></i> Edit Activity
+                            </a>
+                            <form action="/delete_activity/event-{{ event['id'] }}/activity-{{ activity['id'] }}" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-danger btn-sm mt-2">
+                                    <i class="fas fa-trash-alt me-1"></i> Delete Activity
+                                </button>
+                            </form>                                          
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="far fa-calendar-times"></i>
+                <h4>No Activities Found</h4>
+                <p class="text-muted">There are no activities scheduled for this event yet.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="modal fade" id="editActivityModal" tabindex="-1" aria-labelledby="editActivityModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header bg-gradient" style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white;">
+              <h5 class="modal-title" id="editActivityModalLabel">
+                <i class="fas fa-edit me-2"></i>Edit Activity
+              </h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form id="editActivityForm" action="/update_activity" method="POST">
+                <input type="hidden" id="event_id" name="event_id" value="{{ event['id'] }}">
+                <input type="hidden" id="activity_id" name="activity_id" value="">
+                
+                <div class="mb-3">
+                  <label for="activity_name" class="form-label fw-bold">Activity Name</label>
+                  <input type="text" class="form-control" id="activity_name" name="activity_name" required>
+                </div>
+                
+                <!-- <div class="mb-3">
+                  <label for="description" class="form-label fw-bold">Description</label>
+                  <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                </div> -->
+                
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label for="start_date" class="form-label fw-bold">Start Date</label>
+                    <input type="date" class="form-control" id="start_date" name="start_date" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="start_time" class="form-label fw-bold">Start Time</label>
+                    <input type="time" class="form-control" id="start_time" name="start_time" required>
+                  </div>
+                </div>
+                
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label for="end_date" class="form-label fw-bold">End Date</label>
+                    <input type="date" class="form-control" id="end_date" name="end_date" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="end_time" class="form-label fw-bold">End Time</label>
+                    <input type="time" class="form-control" id="end_time" name="end_time" required>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                <i class="fas fa-times me-1"></i>Cancel
+              </button>
+              <button type="submit" form="editActivityForm" class="btn btn-primary">
+                <i class="fas fa-save me-1"></i>Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <!-- Footer -->
+    <!-- <footer class="bg-dark text-white text-center py-3">
+        <div class="container">
+            <p class="mb-0">Event Management System &copy; 2025. All rights reserved.</p>
+        </div>
+    </footer> -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+  const editButtons = document.querySelectorAll('a[href*="/edit_activity/"]');
+
+  editButtons.forEach(button => {
+    button.setAttribute('data-bs-toggle', 'modal');
+    button.setAttribute('data-bs-target', '#editActivityModal');
+
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+
+      const href = this.getAttribute('href');
+      const activityIdMatch = href.match(/activity-(\d+)/);
+      const eventIdMatch = href.match(/event-(\d+)/);
+
+      if (!activityIdMatch || !eventIdMatch) return;
+
+      const activityId = activityIdMatch[1];
+      const eventId = eventIdMatch[1];
+
+      const activityCard = this.closest('.activity-card');
+      if (!activityCard) return;
+
+      // Extract data from activity card
+      const activityName = activityCard.querySelector('.activity-title')?.textContent.trim() || '';
+      const startDate = activityCard.querySelector('.start-date')?.dataset.value || '';
+      const startTime = activityCard.querySelector('.start-time')?.dataset.value || '';
+      const endDate = activityCard.querySelector('.end-date')?.dataset.value || '';
+      const endTime = activityCard.querySelector('.end-time')?.dataset.value || '';
+
+      document.getElementById('activity_id').value = activityId;
+      document.getElementById('event_id').value = eventId;
+      document.getElementById('activity_name').value = activityName;
+      document.getElementById('start_date').value = startDate;
+      document.getElementById('start_time').value = startTime;
+      document.getElementById('end_date').value = endDate;
+      document.getElementById('end_time').value = endTime;
+
+      document.getElementById('editActivityForm').action = `/update_activity/event-${eventId}/activity-${activityId}`;
+    });
+  });
+});
+        </script>
+</body>
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | Student Portal</title>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #6610f2;
+            --primary-dark: #520dc2;
+            --secondary-color: #6f42c1;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f6f8fb, #e9ecef);
+            min-height: 100vh;
+            font-family: 'Poppins', 'Arial', sans-serif;
+            padding: 40px 0;
+        }
+
+        .register-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .register-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 30px 0;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .register-icon {
+            background-color: white;
+            color: var(--primary-color);
+            width: 80px;
+            height: 80px;
+            font-size: 2.5rem;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .register-title {
+            font-weight: 700;
+            margin-bottom: 5px;
+            font-size: 1.8rem;
+        }
+
+        .register-subtitle {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .register-body {
+            padding: 40px 30px;
+        }
+
+        .form-floating {
+            margin-bottom: 20px;
+        }
+
+        .form-floating > .form-control,
+        .form-floating > .form-select {
+            height: calc(3.5rem + 2px);
+        }
+
+        .form-floating > label {
+            padding: 1rem 0.75rem;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 16, 242, 0.15);
+        }
+
+        .file-upload-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .file-upload-label {
+            display: block;
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+
+        .file-upload-input {
+            padding: 15px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            width: 100%;
+            transition: all 0.2s ease;
+        }
+
+        .file-upload-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 16, 242, 0.15);
+        }
+
+        .btn-register {
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: white;
+            padding: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-register:hover {
+            background: linear-gradient(90deg, var(--primary-dark), var(--primary-color));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 16, 242, 0.2);
+        }
+
+        .register-footer {
+            border-top: 1px solid #eee;
+            padding: 20px 30px;
+            text-align: center;
+        }
+
+        .home-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .home-link:hover {
+            color: var(--primary-dark);
+        }
+
+        .home-link i {
+            margin-right: 6px;
+        }
+
+        .header-home-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.2s ease;
+        }
+
+        .header-home-link:hover {
+            transform: translateX(-3px);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+        }
+
+        .form-col {
+            flex: 1;
+            padding: 0 10px;
+        }
+
+        /* Flash message styling */
+        .alert-container {
+            margin-bottom: 20px;
+        }
+
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        @media (max-width: 767px) {
+            .form-row {
+                display: block;
+            }
+            
+            .form-col {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-card">
+        <div class="register-header">
+            <a href="{{ url_for('index') }}" class="header-home-link">
+                <i class="bi bi-house"></i>
+            </a>
+            <div class="register-icon">
+                <i class="bi bi-person-plus"></i>
+            </div>
+            <h2 class="register-title">Student Registration</h2>
+            <p class="register-subtitle">Create your student account to access the portal</p>
+        </div>
+        
+        <div class="register-body">
+            <!-- Flash messages display -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="alert-container">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" enctype="multipart/form-data">
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Last Name" value="{{ lastname|default('') }}" required>
+                            <label for="lastname">Last Name</label>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="firstname" name="firstname" placeholder="First Name" value="{{ firstname|default('') }}" required>
+                            <label for="firstname">First Name</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="middlename" name="middlename" placeholder="Middle Name" value="{{ middlename|default('') }}">
+                    <label for="middlename">Middle Name</label>
+                </div>
+                
+                <div class="form-floating mb-3">
+                    <input type="number" class="form-control" id="usn" name="usn" placeholder="USN" value="{{ usn|default('') }}" required>
+                    <label for="usn">USN</label>
+                    <small class="form-text text-muted">Enter your 8-digit USN (e.g., 21000******)</small>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-floating">
+                            <select class="form-select" id="course" name="course" required>
+                                <option value="" disabled {% if not course %}selected{% endif %}>Select Course</option>
+                                <option value="BSIT" {% if course == 'BSIT' %}selected{% endif %}>BSIT</option>
+                                <option value="BSCS" {% if course == 'BSCS' %}selected{% endif %}>BSCS</option>
+                                <option value="BSBA" {% if course == 'BSBA' %}selected{% endif %}>BSBA</option>
+                            </select>
+                            <label for="course">Course</label>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-floating">
+                            <select class="form-select" id="year" name="year" required>
+                                <option value="" disabled {% if not year %}selected{% endif %}>Select Year</option>
+                                <option value="1st" {% if year == '1st' %}selected{% endif %}>1st</option>
+                                <option value="2nd" {% if year == '2nd' %}selected{% endif %}>2nd</option>
+                                <option value="3rd" {% if year == '3rd' %}selected{% endif %}>3rd</option>
+                                <option value="4th" {% if year == '4th' %}selected{% endif %}>4th</option>
+                            </select>
+                            <label for="year">Year Level</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-floating mb-3">
+                    <input type="date" class="form-control" id="dob" name="dob" value="{{ dob|default('') }}" required>
+                    <label for="dob">Date of Birth</label>
+                </div>
+                
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                    <label for="password">Password</label>
+                </div>
+                
+                <div class="file-upload-wrapper">
+                    <label class="file-upload-label">Profile Picture</label>
+                    <input type="file" class="file-upload-input form-control" name="profile_picture" id="profile_picture">
+                </div>
+                
+                <button type="submit" class="btn btn-register">
+                    <i class="bi bi-check-circle me-2"></i>Complete Registration
+                </button>
+            </form>
+        </div>
+        
+        <div class="register-footer">
+            <a href="{{ url_for('login') }}" class="home-link">
+                <i class="bi bi-box-arrow-in-right"></i> Already have an account? Login
+            </a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

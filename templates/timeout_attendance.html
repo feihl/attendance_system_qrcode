@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ event['event_name'] }} - Attendance</title>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <script src="/static/bootstrap/js/html5-qrcode.min.js"></script>
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Poppins', 'Arial', sans-serif;
+            color: #333;
+            position: relative;
+        }
+
+        .container {
+            max-width: 800px;
+        }
+
+        .header-section {
+            padding: 25px;
+            background: linear-gradient(135deg, #7248c9, #6610f2);
+            color: white;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 16px rgba(102, 16, 242, 0.15);
+        }
+
+        h1 {
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .scanner-container {
+            background-color: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+            margin-top: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scanner-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, #6610f2, #6f42c1);
+        }
+
+        .scanner-title {
+            color: #6610f2;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .scanner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 320px;
+            height: 320px;
+            border: 3px solid #6610f2;
+            border-radius: 12px;
+            margin: 20px auto;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            position: relative;
+        }
+
+        .scanner::after {
+            content: '';
+            position: absolute;
+            width: 90%;
+            height: 2px;
+            background: rgba(102, 16, 242, 0.6);
+            animation: scanAnimation 2s linear infinite;
+        }
+
+        @keyframes scanAnimation {
+            0% { top: 10%; }
+            50% { top: 90%; }
+            100% { top: 10%; }
+        }
+
+        .scan-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            border: 1px solid rgba(102, 16, 242, 0.3);
+            border-radius: 12px;
+            box-shadow: inset 0 0 0 3px rgba(102, 16, 242, 0.1);
+            z-index: 10;
+        }
+
+        .scan-corners::before,
+        .scan-corners::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-color: #6610f2;
+            border-style: solid;
+            border-width: 0;
+        }
+
+        .scan-corners::before {
+            top: 0;
+            left: 0;
+            border-top-width: 3px;
+            border-left-width: 3px;
+            border-top-left-radius: 8px;
+        }
+
+        .scan-corners::after {
+            top: 0;
+            right: 0;
+            border-top-width: 3px;
+            border-right-width: 3px;
+            border-top-right-radius: 8px;
+        }
+
+        .scan-corners-bottom::before,
+        .scan-corners-bottom::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-color: #6610f2;
+            border-style: solid;
+            border-width: 0;
+        }
+
+        .scan-corners-bottom::before {
+            bottom: 0;
+            left: 0;
+            border-bottom-width: 3px;
+            border-left-width: 3px;
+            border-bottom-left-radius: 8px;
+        }
+
+        .scan-corners-bottom::after {
+            bottom: 0;
+            right: 0;
+            border-bottom-width: 3px;
+            border-right-width: 3px;
+            border-bottom-right-radius: 8px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .status-ready {
+            background-color: #e9f5ff;
+            color: #0d6efd;
+        }
+
+        .status-success {
+            background-color: #e7f7ee;
+            color: #198754;
+        }
+
+        .btn-custom {
+            background-color: #6610f2;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-custom:hover {
+            background-color: #520dc2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 16, 242, 0.25);
+        }
+
+        .view-btn {
+            margin-top: 25px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid #6610f2;
+            color: #6610f2;
+        }
+
+        .view-btn:hover {
+            background-color: #6610f2;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 16, 242, 0.25);
+        }
+
+        /* Custom modal styles */
+        .custom-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1050;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s linear 0.25s, opacity 0.25s 0s;
+            pointer-events: none;
+        }
+
+        .custom-modal.show {
+            visibility: visible;
+            opacity: 1;
+            transition-delay:.0s;
+            pointer-events: auto;
+        }
+
+        .modal-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            margin: 1.75rem auto;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .custom-modal.show .modal-content-wrapper {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid #e9ecef;
+            background: linear-gradient(90deg, #6610f2, #6f42c1);
+            color: white;
+        }
+
+        .modal-title {
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            line-height: 1;
+            color: white;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-body p {
+            margin-bottom: 12px;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .student-info-card {
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .student-avatar {
+            background-color: #f1eaff;
+            border-radius: 10px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: #6610f2;
+        }
+
+        .student-details {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .student-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #212529;
+        }
+
+        .student-meta {
+            font-size: 0.9rem;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 5px;
+        }
+
+        .info-list {
+            margin-top: 15px;
+            border-top: 1px solid #e9ecef;
+            padding-top: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f8f9fa;
+        }
+        
+        .info-label {
+            font-weight: 500;
+            color: #6c757d;
+        }
+        
+        .info-value {
+            font-weight: 600;
+            color: #212529;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4 mb-5">
+        <div class="header-section text-center">
+            <h1 class="display-6">{{ event.get('event_name', 'Unknown Event') }}</h1>
+            <p class="lead">Activity: {{ activity.get('activity_name', 'Unknown Activity') }}</p>
+        </div>
+
+        <div class="scanner-container">
+            <h2 class="scanner-title">Scan Attendance QR Code</h2>
+            <p class="text-muted mb-3">Please position your QR code clearly in the camera frame</p>
+            
+            <div class="scanner" id="reader">
+                <div class="scan-overlay">
+                    <div class="scan-corners"></div>
+                    <div class="scan-corners-bottom"></div>
+                </div>
+            </div>
+            
+            <div id="status-indicator" class="status-badge status-ready">
+                <i class="bi bi-qr-code-scan me-2"></i>Ready to scan
+            </div>
+            <p id="qr-result" class="mt-2 text-success fw-bold"></p>
+        </div>
+
+        <div class="text-center">
+            <a href="/view_students/event-{{event['id']}}/activity-{{ activity['id'] }}" class="btn view-btn mt-4">
+                <i class="bi bi-people"></i> View Attendance List
+            </a>
+        </div>
+    </div>
+
+    <!-- Custom Modal -->
+    <div class="custom-modal" id="studentModal">
+        <div class="modal-background" onclick="closeModal()"></div>
+        <div class="modal-content-wrapper">
+            <div class="modal-header">
+                <h5 class="modal-title">Student Information</h5>
+                <button type="button" class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="student-info-card">
+                    <div class="student-avatar">
+                        <img id="student-profile-pic" src="" alt="Profile Picture" class="img-fluid rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                        <div id="student-avatar-text" style="display: none; font-size: 2.5rem; color: #6610f2;">JD</div>
+                    </div>
+                    <div class="student-details">
+                        <div class="student-name" id="student-name">John Doe</div>
+                        <div class="student-meta">
+                            <i class="bi bi-mortarboard"></i>
+                            <span id="student-course">Computer Science</span>
+                        </div>
+                        <div class="student-meta">
+                            <i class="bi bi-calendar3"></i>
+                            <span id="student-year">4th Year</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-list">
+                    <div class="info-item">
+                        <span class="info-label">USN Number</span>
+                        <span class="info-value" id="student-usn">CS12345</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Status</span>
+                        <span class="info-value text-success">Ready to Mark</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" onclick="closeModal()">Cancel</button>
+                <button type="button" class="btn btn-custom" onclick="confirmAttendance()">
+                    <i class="bi bi-check-circle me-2"></i>Confirm Attendance
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+    if (typeof Html5Qrcode === "undefined") {
+        console.error("Html5Qrcode library not loaded. Check the script source.");
+        return;
+    }
+
+    const statusIndicator = document.getElementById('status-indicator');
+    const qrResult = document.getElementById('qr-result');
+    let scannedData = null;
+
+    function onScanSuccess(decodedText, decodedResult) {
+        // Update UI
+        statusIndicator.className = "status-badge status-success";
+        statusIndicator.innerHTML = '<i class="bi bi-check-circle me-2"></i>QR Code detected';
+        qrResult.innerText = "Processing: " + decodedText;
+        
+        // Store the scanned USN
+        scannedData = decodedText;
+
+        // First, fetch student information without recording attendance
+        fetch(`/verify_student`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+                "usn": decodedText,
+                "activity_id": "{{ activity['id'] }}",
+                "event_id": "{{ event['id'] }}"
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                qrResult.innerText = data.error;
+                qrResult.className = "mt-2 text-danger fw-bold";
+                
+                // Reset status after 3 seconds
+                setTimeout(() => {
+                    statusIndicator.className = "status-badge status-ready";
+                    statusIndicator.innerHTML = '<i class="bi bi-qr-code-scan me-2"></i>Ready to scan';
+                    qrResult.innerText = "";
+                    qrResult.className = "mt-2 text-success fw-bold";
+                }, 3000);
+                return;
+            }
+
+            // Populate modal with student information
+            document.getElementById('student-name').innerText = data.student.fullname;
+            document.getElementById('student-course').innerText = data.student.course;
+            document.getElementById('student-year').innerText = data.student.year;
+            document.getElementById('student-usn').innerText = data.student.usn;
+
+            // Populate profile picture and other student details
+            document.getElementById('student-profile-pic').src = data.student.profile_picture;
+            document.getElementById('student-profile-pic').onerror = function() {
+                // If image fails to load, show initials instead
+                this.style.display = 'none';
+                document.getElementById('student-avatar-text').style.display = 'block';
+                
+                // Get initials from student name
+                const name = data.student.fullname;
+                const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                document.getElementById('student-avatar-text').innerText = initials;
+            };
+            
+            // Show the custom modal
+            openModal();
+        })
+        .catch(error => {
+            console.error("Error verifying student:", error);
+            qrResult.innerText = "Error verifying student. Please try again.";
+            qrResult.className = "mt-2 text-danger fw-bold";
+            
+            // Reset status after 3 seconds
+            setTimeout(() => {
+                statusIndicator.className = "status-badge status-ready";
+                statusIndicator.innerHTML = '<i class="bi bi-qr-code-scan me-2"></i>Ready to scan';
+                qrResult.innerText = "";
+                qrResult.className = "mt-2 text-success fw-bold";
+            }, 3000);
+        });
+    }
+
+    function onScanError(errorMessage) {
+        console.error("QR Scan Error:", errorMessage);
+    }
+
+    // Initialize QR code scanner
+    const qrCodeScanner = new Html5Qrcode("reader");
+
+    const config = {
+        fps: 10,    // Frame per second
+        qrbox: 250  // Box size for scanning
+    };
+
+    qrCodeScanner.start({ facingMode: "environment" }, config, onScanSuccess, onScanError)
+        .catch(err => {
+            console.error("QR Code Scanner initialization failed:", err);
+        });
+
+    // Handle page unload (Stop scanning when the page is closed or navigated away)
+    window.onbeforeunload = () => {
+        qrCodeScanner.stop().then(() => {
+            console.log("QR Scanner stopped.");
+        }).catch((err) => {
+            console.error("Error stopping QR Scanner:", err);
+        });
+    };
+
+    // Custom modal functions
+    window.openModal = function() {
+        document.getElementById('studentModal').classList.add('show');
+        document.body.style.overflow = 'hidden';
+    };
+
+    window.closeModal = function() {
+        document.getElementById('studentModal').classList.remove('show');
+        document.body.style.overflow = '';
+        
+        // Reset status
+        setTimeout(() => {
+            statusIndicator.className = "status-badge status-ready";
+            statusIndicator.innerHTML = '<i class="bi bi-qr-code-scan me-2"></i>Ready to scan';
+            qrResult.innerText = "";
+            qrResult.className = "mt-2 text-success fw-bold";
+            scannedData = null;
+        }, 500);
+    };
+
+    // Function to submit attendance after confirmation
+    window.confirmAttendance = function() {
+        if (!scannedData) return;
+        
+        fetch(`/timeout_submit_scan/{{ event["id"] }}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+                "usn": scannedData,
+                "activity_id": "{{ activity['id'] }}"
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            closeModal();
+            
+            qrResult.innerText = data.message;
+            qrResult.className = "mt-2 text-success fw-bold";
+            
+            // Reset status after 3 seconds
+            setTimeout(() => {
+                statusIndicator.className = "status-badge status-ready";
+                statusIndicator.innerHTML = '<i class="bi bi-qr-code-scan me-2"></i>Ready to scan';
+                qrResult.innerText = "";
+                scannedData = null;
+            }, 3000);
+        })
+        .catch(error => {
+            console.error("Error submitting attendance:", error);
+            closeModal();
+            
+            qrResult.innerText = "Error recording attendance. Please try again.";
+            qrResult.className = "mt-2 text-danger fw-bold";
+            
+            // Reset status after 3 seconds
+            setTimeout(() => {
+                statusIndicator.className = "status-badge status-ready";
+                statusIndicator.innerHTML = '<i class="bi bi-qr-code-scan me-2"></i>Ready to scan';
+                qrResult.innerText = "";
+                qrResult.className = "mt-2 text-success fw-bold";
+                scannedData = null;
+            }, 3000);
+        });
+    };
+});
+    </script>
+</body>
+</html>

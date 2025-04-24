@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Singlethreads Events</title>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3a86ff;
+            --secondary-color: #8338ec;
+            --accent-color: #ff006e;
+            --light-bg: #f8f9fa;
+            --dark-bg: #212529;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: white !important;
+        }
+        
+        .header-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+        }
+        
+        .page-title-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--secondary-color);
+            font-weight: 600;
+            transition: all 0.2s ease;
+            margin-top: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .back-link:hover {
+            color: var(--primary-color);
+            transform: translateX(-5px);
+        }
+        
+        .back-link i {
+            margin-right: 0.5rem;
+        }
+        
+        .event-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 5px solid var(--secondary-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+            display: block;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .event-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .event-title i {
+            margin-right: 0.5rem;
+            font-size: 1rem;
+        }
+        
+        .event-meta {
+            display: flex;
+            align-items: center;
+            color: #777;
+            font-size: 0.85rem;
+            margin-bottom: 0.75rem;
+            background-color: var(--light-bg);
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+        }
+        
+        .event-meta i {
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            color: #ccc;
+            margin-bottom: 1rem;
+        }
+        
+        .logout-link {
+            color: white;
+            transition: all 0.2s ease;
+        }
+        
+        .logout-link:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .btn-new-event {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(255, 0, 110, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-new-event:hover {
+            background-color: #e5005f;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 0, 110, 0.4);
+            color: white;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .page-title-section {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .back-link {
+                margin-top: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-graduation-cap me-2"></i>
+                Event Management
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/dashboard">
+                            <i class="fas fa-home me-1"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link logout-link" href="{{ url_for('admin_logout') }}">
+                            <i class="fas fa-sign-out-alt me-1"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4 mb-5">
+        <!-- Header Section -->
+        <div class="header-section">
+            <h1 class="display-5 fw-bold">Singlethreads Events</h1>
+            <p class="lead">View and manage all your Singlethreads events in one place</p>
+        </div>
+
+        <!-- Page Title with Back Button -->
+        <div class="page-title-section">
+            <h2 class="mb-0">
+                <i class="fas fa-calendar-alt me-2"></i> All Events
+            </h2>
+            <a href="/admin/dashboard" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+
+        <!-- Events Grid -->
+        {% if threads %}
+            <div class="row">
+                {% for thread in threads %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <a href="/events/{{ thread['id'] }}" class="event-card">
+                        <div class="event-title">
+                            <i class="fas fa-calendar-day"></i> {{ thread['event_name'] }}
+                        </div>
+                        <div class="event-meta">
+                            <i class="far fa-calendar-alt"></i> Created: {{ thread['date_created'] }}
+                        </div>
+                        <div class="event-meta">
+                            <i class="fas fa-user"></i> Created by: {{ thread['created_by'] }}
+                        </div>
+                        <div class="d-flex justify-content-end mt-3">
+                            <span class="badge bg-primary rounded-pill px-3 py-2">
+                                <i class="fas fa-users me-1"></i> View Details
+                            </span>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="far fa-calendar-times"></i>
+                <h4>No Events Found</h4>
+                <p class="text-muted">There are no Singlethreads events created yet.</p>
+                <a href="/create-event" class="btn btn-new-event mt-3">
+                    <i class="fas fa-plus-circle me-2"></i> Create Your First Event
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

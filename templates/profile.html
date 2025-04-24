@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile | Student Portal</title>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #6610f2;
+            --primary-dark: #520dc2;
+            --secondary-color: #6f42c1;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f6f8fb, #e9ecef);
+            min-height: 100vh;
+            font-family: 'Poppins', 'Arial', sans-serif;
+            padding: 40px 0;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 30px 0;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .profile-picture-container {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 0 auto 15px;
+            border: 4px solid white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            background-color: #f8f9fa;
+        }
+
+        .profile-picture {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .no-picture-icon {
+            font-size: 3rem;
+            color: #adb5bd;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .profile-title {
+            font-weight: 700;
+            margin-bottom: 5px;
+            font-size: 1.8rem;
+        }
+
+        .profile-subtitle {
+            opacity: 0.9;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .profile-body {
+            padding: 40px 30px;
+        }
+
+        .profile-info-container {
+            margin-bottom: 30px;
+        }
+
+        .info-label {
+            font-size: 0.8rem;
+            color: #6c757d;
+            font-weight: 500;
+            margin-bottom: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 1.1rem;
+            color: #212529;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+
+        .profile-section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding-bottom: 10px;
+        }
+
+        .qr-container {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .qr-code {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 5px;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+
+        .qr-code:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .qr-caption {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-top: 10px;
+        }
+
+        .profile-footer {
+            border-top: 1px solid #eee;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .btn-home {
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            background-color: transparent;
+        }
+
+        .btn-home:hover {
+            background-color: rgba(102, 16, 242, 0.05);
+        }
+
+        .btn-logout {
+            color: white;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border: none;
+        }
+
+        .btn-logout:hover {
+            background: linear-gradient(90deg, var(--primary-dark), var(--primary-color));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 16, 242, 0.2);
+        }
+
+        .btn-icon {
+            margin-right: 8px;
+        }
+
+        .header-home-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.2s ease;
+        }
+
+        .header-home-link:hover {
+            transform: translateX(-3px);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .profile-info-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+        }
+
+        .profile-info-col {
+            flex: 1;
+            min-width: 200px;
+            padding: 0 10px;
+        }
+
+        @media (max-width: 576px) {
+            .profile-info-row {
+                display: block;
+            }
+            
+            .profile-info-col {
+                padding: 0;
+            }
+            
+            .profile-footer {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .btn-action {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-card">
+        <div class="profile-header">
+            <a href="{{ url_for('index') }}" class="header-home-link">
+                <i class="bi bi-house"></i>
+            </a>
+            <div class="profile-picture-container">
+                {% if user[9] %}
+                <img src="{{ url_for('uploaded_file', filename=user[9]) }}" alt="Profile Picture" class="profile-picture">
+                {% else %}
+                <i class="bi bi-person no-picture-icon"></i>
+                {% endif %}
+            </div>
+            <h2 class="profile-title">{{ user[2] }} {{ user[1] }}</h2>
+            <p class="profile-subtitle">
+                <i class="bi bi-mortarboard-fill"></i>
+                {{ user[5] }} | {{ user[6] }} Year
+            </p>
+        </div>
+        
+        <div class="profile-body">
+            <h3 class="profile-section-title">
+                <i class="bi bi-person-badge me-2"></i>Personal Information
+            </h3>
+            
+            <div class="profile-info-container">
+                <div class="profile-info-row">
+                    <div class="profile-info-col">
+                        <div class="info-label">Last Name</div>
+                        <div class="info-value">{{ user[1] }}</div>
+                    </div>
+                    <div class="profile-info-col">
+                        <div class="info-label">First Name</div>
+                        <div class="info-value">{{ user[2] }}</div>
+                    </div>
+                </div>
+                
+                <div class="profile-info-row">
+                    <div class="profile-info-col">
+                        <div class="info-label">Middle Name</div>
+                        <div class="info-value">{{ user[3] if user[3] else "N/A" }}</div>
+                    </div>
+                    <div class="profile-info-col">
+                        <div class="info-label">Date of Birth</div>
+                        <div class="info-value">{{ user[7] }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <h3 class="profile-section-title">
+                <i class="bi bi-backpack me-2"></i>Academic Information
+            </h3>
+            
+            <div class="profile-info-container">
+                <div class="profile-info-row">
+                    <div class="profile-info-col">
+                        <div class="info-label">USN</div>
+                        <div class="info-value">{{ user[4] }}</div>
+                    </div>
+                    <div class="profile-info-col">
+                        <div class="info-label">Course</div>
+                        <div class="info-value">{{ user[5] }}</div>
+                    </div>
+                </div>
+                
+                <div class="profile-info-row">
+                    <div class="profile-info-col">
+                        <div class="info-label">Year Level</div>
+                        <div class="info-value">{{ user[6] }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="qr-container">
+                <a href="{{ url_for('static', filename='qrcodes/' + user[4] + '.png') }}" target="_blank">
+                    <img src="{{ url_for('static', filename='qrcodes/' + user[4] + '.png') }}" alt="QR Code" class="qr-code">
+                </a>
+                <p class="qr-caption">Student ID QR Code - Scan for verification</p>
+            </div>
+        </div>
+        
+        <div class="profile-footer">
+            <a href="{{ url_for('index') }}" class="btn-action btn-home">
+                <i class="bi bi-house-door btn-icon"></i>Back to Home
+            </a>
+            
+            <a href="{{ url_for('logout') }}" class="btn-action btn-logout">
+                <i class="bi bi-box-arrow-right btn-icon"></i>Logout
+            </a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

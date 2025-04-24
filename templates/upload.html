@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Student CSV</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 2rem;
+            background: #f4f4f4;
+        }
+        .container {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 500px;
+            margin: auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input[type="file"] {
+            margin-top: 1rem;
+        }
+        button {
+            margin-top: 1rem;
+            padding: 0.5rem 1.5rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .message {
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Upload Student Information</h2>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <label>Select CSV File:</label><br>
+            <input type="file" name="file" accept=".csv" required><br>
+            <button type="submit">Upload</button>
+        </form>
+        <div class="message" id="message"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('uploadForm');
+        const messageBox = document.getElementById('message');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+
+            const response = await fetch('/upload-students', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            messageBox.textContent = JSON.stringify(result, null, 2);
+        });
+    </script>
+</body>
+</html>

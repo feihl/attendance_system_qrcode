@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Attendance System | Admin Portal</title>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #6610f2;
+            --primary-dark: #520dc2;
+            --secondary-color: #6f42c1;
+            --accent-color: #e9ecef;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Poppins', 'Arial', sans-serif;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .navbar {
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: white !important;
+            padding: 10px 0;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, rgba(102, 16, 242, 0.9), rgba(111, 66, 193, 0.9)), 
+                        url('/api/placeholder/1920/480') center/cover no-repeat;
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .hero-title {
+            font-size: 2.6rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .card-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 60px;
+            flex-wrap: wrap;
+        }
+        
+        .feature-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            width: 100%;
+            max-width: 340px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border-top: 5px solid var(--primary-color);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            font-size: 2.8rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .feature-description {
+            color: #6c757d;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        
+        .btn-action {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-block;
+        }
+        
+        .btn-action:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 16, 242, 0.3);
+            color: white;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 30px 0;
+            margin-top: auto;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            margin-right: 15px;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .copyright {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 60px 0;
+            }
+            
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .feature-card {
+                max-width: 100%;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-qr-code me-2"></i>Event Attendance System
+            </a>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">Admin Portal</h1>
+            <p class="hero-subtitle">Manage events, activities, and track attendance efficiently</p>
+        </div>
+    </section>
+    
+    <!-- Main Content -->
+    <div class="container">
+        <div class="card-container">
+            <!-- Login Card -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                </div>
+                <h3 class="feature-title">Admin Login</h3>
+                <p class="feature-description">
+                    Already have an account? Sign in to access the admin dashboard
+                    and manage your events.
+                </p>
+                <a href="{{ url_for('admin_login') }}" class="btn-action">Login Now</a>
+            </div>
+            
+            <!-- Register Card -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-person-plus"></i>
+                </div>
+                <h3 class="feature-title">Admin Registration</h3>
+                <p class="feature-description">
+                    Create a new admin account to start organizing events and
+                    tracking attendance.
+                </p>
+                <a href="{{ url_for('admin_register') }}" class="btn-action btn-outline">Register</a>
+            </div>
+            
+            <!-- Features Card -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-calendar-check"></i>
+                </div>
+                <h3 class="feature-title">Event Management</h3>
+                <p class="feature-description">
+                    Create and manage events, track attendance in real-time, and
+                    generate detailed reports.
+                </p>
+                <a href="#" class="btn-action" style="background-color: #6c757d;">Learn More</a>
+            </div>
+        </div>
+    </div>
+    
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
